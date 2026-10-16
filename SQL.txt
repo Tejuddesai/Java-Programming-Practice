@@ -1,0 +1,285 @@
+create database join_practice;
+use join_practice;
+
+CREATE TABLE courses (
+course_id INT PRIMARY KEY AUTO_INCREMENT,
+course_name VARCHAR(100),
+duration_month INT,
+fees INT,
+trainer_name VARCHAR(100)
+);
+
+Create Table student (
+student_id Int PRIMARY KEY auto_increment,
+student_name varchar(100),
+email varchar(50),
+city varchar(50),
+marks Int,
+course_id Int,foreign key(course_id) references courses(course_id));
+
+INSERT INTO courses
+(course_name, duration_month, fees, trainer_name)
+VALUES
+('Java Full Stack', 6, 60000, 'Rohit'),
+('Python Full Stack', 5, 50000, 'Priya'),
+('Data Science', 8, 75000, 'Amit'),
+('React Development', 3, 30000, 'Sneha'),
+('Spring Boot', 4, 40000, 'Rohit'),
+('Angular Development', 4, 45000, 'Neha'),
+('AWS Cloud', 3, 35000, 'Vikas');
+
+INSERT INTO student
+(student_name, email, city, marks, course_id)
+VALUES
+('Aditya', 'aditya@gmail.com', 'Pune', 85, 1),
+('Rahul', 'rahul@gmail.com', 'Mumbai', 72, 1),
+('Sneha', 'sneha@gmail.com', 'Pune', 90, 2),
+('Priya', 'priya@gmail.com', 'Nashik', 88, 3),
+('Amit', 'amit@gmail.com', 'Pune', 65, 1),
+('Neha', 'neha@gmail.com', 'Mumbai', 78, 4),
+('Rohan', 'rohan@gmail.com', 'Pune', 82, 5),
+('Kiran', 'kiran@gmail.com', 'Satara', 70, NULL),
+('Pooja', 'pooja@gmail.com', 'Pune', 95, 2),
+('Vivek', 'vivek@gmail.com', 'Mumbai', 60, 3);
+
+select * from student;
+select * from courses;
+
+-- LEVEL 1 — Basic INNER JOIN
+
+select * from student where course_id = 4;
+
+select s.student_name, s.city, c.course_name from student s Inner join courses c on c.course_id = s.course_id;
+
+select s.student_name, c.course_name as 'Course Name' from student s Inner join courses c On s.course_id = c.course_id  where c.course_name = "Java Full Stack";
+
+select s.student_name, c.course_name from student s INNER JOIN courses c ON s.course_id = c.course_id where course_name = "Spring Boot";
+
+select s.student_name, s.marks, c.course_name from student s inner join courses c On s.course_id = c.course_id ;
+
+select s.student_name, s.city, c.course_name from student s Inner join courses c On s.course_id = c.course_id where s.city = "PUNE";
+
+select s.student_name,s.marks, c.course_name from student s Inner JOIN courses c On s.course_id = c.course_id where s.marks > 80;
+
+select s.student_name, s.marks , c.course_name from student s Inner JOIN courses c On s.course_id = c.course_id where s.student_name like'r%'
+
+-- LEVEL 2 — WHERE + JOIN
+
+select s.student_name,s.city, c.course_name from student s Inner JOin courses c On s.course_id = c.course_id where s.city='pune' And course_name = "Java Full Stack";
+
+select s.student_name,s.marks,c.course_name from student s Inner join  courses c On s.course_id = c.course_id where s.marks > 75;
+
+select s.student_name,s.marks,c.course_name from student s Inner join courses c On s.course_id = c.course_id where s.marks >= 70 AND s.marks <= 90; 
+
+select s.student_name,c.fees, c.course_name from student s Inner join courses c On s.course_id = c.course_id where c.fees > 40000;
+
+select s.student_name, c.trainer_name from student s Inner join courses c On s.course_id = c.course_id where c.trainer_name = "Rohit";
+
+select s.student_name ,s.city, s.marks from student s Inner join courses c ON s.course_id = c.course_id where s.city = "Mumbai" And s.marks > 70;
+
+-- LEVEL 3 — GROUP BY + JOIN + HAVING
+
+select c.course_name, count(s.student_id) as 'Student count' from courses c Inner join student s On s.course_id = c.course_id group by course_name having count(s.student_id);
+
+select c.course_name,count(s.student_id) AS 'Student Count'  from courses c Inner Join student s ON c.course_id = s.course_id Group by  course_name having count(s.student_id)>1;
+
+select c.course_name,AVG(s.marks) as 'Average marks' from courses c Inner Join student s ON c.course_id = s.course_id group by c.course_name ;
+
+select c.course_name, Avg(s.marks) AS 'Average Marks' from student s  Inner Join courses c On c.course_id = s.course_id Group by c.course_name Having Avg(s.marks)>80;
+
+select c.course_name ,Max(s.student_id) as 'Max Student No' from student s Inner join courses c On c.course_id = s.course_id Group by c.course_name ;
+
+select c.trainer_name,count(s.student_id) as 'Student count' from student s Inner join courses c ON c.course_id = s.course_id group by c.trainer_name
+
+select c.trainer_name,count(s.student_id) as 'Student count' from student s Inner join courses c ON c.course_id = s.course_id group by c.trainer_name having count(s.student_id)>2;
+
+select c.course_name,Max(s.marks) AS 'Highest Marks' from  student s Inner Join courses c On c.course_id = s.course_id group by c.course_name ;
+
+-- LEVEL 4 — LEFT JOIN
+
+select c.course_name,s.student_name  from student s Left Join courses c On c.course_id = s.course_id;
+
+select c.course_name, count(s.student_id) as 'students No' from courses c left join student s On c.course_id = s.course_id Group By c.course_name having count(s.student_id)>=1;
+
+select c.course_name, count(s.student_id) as 'student No' from courses c Left join student s On c.course_id = s.course_id group by c.course_name ;
+
+-- LEVEL 5 — RIGHT JOIN
+
+select c.course_name, s.student_name  from courses c right join student s On s.course_id = c.course_id ;
+
+select s.student_name ,c.course_name from courses c Right join student s On s.course_id = c.course_id where c.course_name IS null ;
+
+-- Write a query to create an Employee table with columns: empid, empname, dept, salary, age, city.
+
+create table employee(
+empId Int primary key auto_increment ,
+employeeName varchar(50),
+department varchar(30),
+salary int,
+age int,
+city varchar(40) 
+);
+
+Insert into employee 
+(employeeName,department,salary,age,city)
+values 
+('Ojas', 'IT', 25000, 24, 'Sangli'),
+('Rahul', 'HR', 45000, 30, 'Pune'),
+('Priya', 'IT', 52000, 28, 'Mumbai'),
+('Pooja', 'Finance', 60000, 35, 'Pune'),
+('Amit', 'HR', 22000, 26, 'Mumbai'),
+('Sneha', 'IT', 48000, 32, 'Sangli'),
+('Pankaj', 'Finance', 75000, 40, 'Pune'),
+('Neha', 'IT', 35000, 23, 'Mumbai'),
+('Ajay', 'HR', 55000, 29, 'Sangli'),
+('Payal', 'Finance', 30000, 27, 'Pune');
+
+-- Write a query to add a new column "email" to the Employee table.
+
+alter table employee add column email varchar(60);
+
+-- Write a query to change the data type of salary to BIGINT
+
+alter table employee modify column salary BIGINT;
+
+-- Write a query to rename the column dept to department.
+
+alter table employee rename column department to departments;
+
+-- Write a query to drop the column city from the Employee table.
+
+alter table employee drop column city;
+
+-- Write a query to create a backup table named EmpBackup with all Employee data.
+
+create table empBackUp AS select * from employee;
+drop table empBackUp;
+-- Write a query to rename the Employee table to Emp.
+
+rename table employee to Emp;
+
+-- Write a query to truncate the Employee table.
+ 
+ truncate table Emp;
+
+-- Write a query to drop the Employee table.
+
+drop table Emp;
+
+-- Write a query to add a check constraint to ensure age is greater than 18.
+
+alter table employee add constraint chk_age check (age>18);
+
+-- Write a query to insert a single employee record into the Employee table.
+
+select * from employee where empid=1;
+
+-- Write a query to insert three employee records in one statement.
+
+Insert into employee (employeeName,department,salary,age,city)
+values ('c', 'HR', 1000000, 30, 'Pune'),
+('d', 'IT', 52000, 20000, 'Mumbai'),
+('e', 'Finance', 12000, 35, 'Pune');
+
+-- Write a query to update the salary of an employee having empid = 1.
+
+select * from employee;
+update employee set salary=5000 where empId=1;
+
+-- Write a query to change the city of all IT department employees.
+
+set sql_safe_update = 1;
+update employee set city = 'sangli' where department = 'IT'; 
+
+-- Write a query to increase all employees' salaries by 10%.
+ 
+select employeeName ,salary,salary *1.20 from employee;
+-- Write a query to delete an employee whose empid is 3.
+delete from employee where empid=3;
+
+-- Write a query to delete all employees working in the HR department.
+delete from employee where department = 'hr';
+
+-- Write a query to insert an employee record by specifying only empid, empname, and dept.
+insert into employee (employeeName,department)
+values ('siya','IT');  
+select * from employee;
+
+-- Write a query to set the department NULL for employee with empid = 2.
+update employee set department = NUll where empid=2;
+select * from employee;
+
+-- Write a query to delete employees whose salary is less than 25000.
+delete from employee  where salary <25000;
+
+-- Write a query to fetch employees whose salary is greater than 40000.
+
+select employeeName,salary from employee where salary >40000;
+
+-- Write a query to fetch employees whose age is between 25 and 35.
+select employeeName,age,department from employee where age>=25 & age<35;
+
+-- Write a query to fetch employees who work in HR or IT department.
+select employeeName,department from employee where department IN ('it','hr');
+
+-- Write a query to fetch employees who are not from Mumbai.
+select employeeName,city from employee where city!= 'Mumbai';
+select * from employee;
+
+-- Write a query to fetch employees whose name starts with the letter ‘P’.
+
+select * from employee where employeeName like  'p%';
+
+-- Write a query to fetch employees whose name contains the letter ‘a’.
+select * from employee where employeeName like 'a%';
+
+-- Write a query to display all employees sorted by salary in ascending order.
+select employeeName,salary from employee order by salary asc; 
+
+-- Write a query to display all employees sorted by age in descending order.
+select employeeName,age from employee order by age desc;
+
+-- Write a query to display the top 3 highest salary employees.
+
+select employeeName, salary from employee order by  salary desc limit 3;
+
+-- Write a query to find the total salary of all employees.
+
+select sum(salary) as total_Salary from employee;
+
+-- Write a query to find the average salary of employees in the IT department.
+select Avg(Salary) from employee where department='it';
+
+-- Write a query to fetch the employee with the minimum salary.
+select min(salary) from employee ;
+
+-- Write a query to find the maximum salary in the Finance department.
+select max(salary) from employee where department= 'finance';
+
+-- Write a query to count how many employees belong to Pune.
+select count(employeeName) employeeCount from employee where city='pune';
+select * from employee where city='pune';
+
+-- Write a query to fetch employees whose salary is between 30000 and 60000.
+select employeeName, salary from employee where salary>=30000 and salary<=60000;
+
+-- Write a query to fetch employees where the department is NOT NULL.
+select employeeName,department from employee where department IS Not NULL;
+
+-- Write a query to fetch employees whose age is below 30 OR salary is above 50000.
+select employeeName,age,salary from employee where age< 30 OR salary >50000;
+
+-- Write a query to display employee name along with salary including 10% bonus.
+select employeeName,salary , salary * 1.10 as bonusSalary from employee ;
+
+-- Write a query to display department-wise total salary.
+select department,sum(Salary) from employee  group by department; 
+
+-- Write a query to display each department and the number of employees in it.
+select department, count(employeeName) as countEmployee from employee group by department;
+
+
+
+
+
+
