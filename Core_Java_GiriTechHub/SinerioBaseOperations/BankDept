@@ -1,0 +1,7 @@
+21.	In a Banking System, how would you use constructor overloading to create different types of accounts?
+
+class BankDept
+{
+
+
+}
